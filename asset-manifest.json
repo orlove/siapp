@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/siapp/static/css/main.419c72bc.chunk.css",
-    "main.js": "/siapp/static/js/main.7ad2c748.chunk.js",
-    "main.js.map": "/siapp/static/js/main.7ad2c748.chunk.js.map",
+    "main.js": "/siapp/static/js/main.1057c66b.chunk.js",
+    "main.js.map": "/siapp/static/js/main.1057c66b.chunk.js.map",
     "runtime-main.js": "/siapp/static/js/runtime-main.5e26e7d8.js",
     "runtime-main.js.map": "/siapp/static/js/runtime-main.5e26e7d8.js.map",
     "static/css/2.4fc5a6bc.chunk.css": "/siapp/static/css/2.4fc5a6bc.chunk.css",
-    "static/js/2.e33a0efb.chunk.js": "/siapp/static/js/2.e33a0efb.chunk.js",
-    "static/js/2.e33a0efb.chunk.js.map": "/siapp/static/js/2.e33a0efb.chunk.js.map",
+    "static/js/2.39c32b07.chunk.js": "/siapp/static/js/2.39c32b07.chunk.js",
+    "static/js/2.39c32b07.chunk.js.map": "/siapp/static/js/2.39c32b07.chunk.js.map",
     "index.html": "/siapp/index.html",
-    "precache-manifest.d872da6df78566c5c6d4fbbb819e1b55.js": "/siapp/precache-manifest.d872da6df78566c5c6d4fbbb819e1b55.js",
+    "precache-manifest.11aaec8132ad644b1b8a5524ce786741.js": "/siapp/precache-manifest.11aaec8132ad644b1b8a5524ce786741.js",
     "service-worker.js": "/siapp/service-worker.js",
     "static/css/2.4fc5a6bc.chunk.css.map": "/siapp/static/css/2.4fc5a6bc.chunk.css.map",
     "static/css/main.419c72bc.chunk.css.map": "/siapp/static/css/main.419c72bc.chunk.css.map",
-    "static/js/2.e33a0efb.chunk.js.LICENSE.txt": "/siapp/static/js/2.e33a0efb.chunk.js.LICENSE.txt"
+    "static/js/2.39c32b07.chunk.js.LICENSE.txt": "/siapp/static/js/2.39c32b07.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.5e26e7d8.js",
     "static/css/2.4fc5a6bc.chunk.css",
-    "static/js/2.e33a0efb.chunk.js",
+    "static/js/2.39c32b07.chunk.js",
     "static/css/main.419c72bc.chunk.css",
-    "static/js/main.7ad2c748.chunk.js"
+    "static/js/main.1057c66b.chunk.js"
   ]
 }
