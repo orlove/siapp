@@ -1,0 +1,38 @@
+.ChecksList .Cell .Cell__children {
+  display: flex;
+}
+
+.ChecksList .Cell .Div {
+  flex: 1;
+  padding: 6px;
+}
+
+/* Прячем иконки в шапке */
+.ChecksList .Cell:nth-child(1) .Icon {
+  opacity: 0;
+}
+
+/* Жирный заголовок столбцов */
+.ChecksList .Cell:nth-child(1) {
+  font-weight: bold;
+}
+
+/* Первая колонка с аватарками и именами шире */
+.ChecksList .Cell .Div:nth-child(1) {
+  flex: 2;
+
+  /* Многоточие если текст не влазит */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Балы */
+.ChecksList .Cell .Values {
+  text-align: center;
+}
+
+/*.RatingList .Cell .Div .Counter {
+  display: inline-block;
+  margin-left: 8px;
+}*/

@@ -1,0 +1,33 @@
+.RatingList .Cell .Cell__children {
+  display: flex;
+}
+
+.RatingList .Cell .Div {
+  flex: 1;
+  padding: 6px;
+}
+
+/* Прячем иконки в шапке */
+.RatingList .Cell:nth-child(1) .Icon {
+  opacity: 0;
+}
+
+/* Жирный заголовок столбцов */
+.RatingList .Cell:nth-child(1) {
+  font-weight: bold;
+}
+
+/* Первая колонка с аватарками и именами шире */
+.RatingList .Cell .Div:nth-child(1) {
+  flex: 3;
+
+  /* Многоточие если текст не влазит */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/*.RatingList .Cell .Div .Counter {
+  display: inline-block;
+  margin-left: 8px;
+}*/
