@@ -1,6 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Panel, PanelHeaderSimple, PanelHeaderButton, Button, List, Group, Cell, Div, Avatar, Header } from '@vkontakte/vkui';
+
+import { MODAL_REWARD, MODAL_SKIPPED, MODAL_NOT_HOME, MODAL_NO_GEODATA } from '../modals/Modal';
 
 import bridge from '@vkontakte/vk-bridge';
 import Api from '../core/api/Api';
@@ -8,6 +9,7 @@ import Api from '../core/api/Api';
 // Redux
 import { connect } from 'react-redux';
 import { updateLevel } from '../redux/actions/level';
+import { openModal } from '../redux/actions/modal';
 
 
 import Icon24Poll from '@vkontakte/icons/dist/24/poll';
@@ -29,15 +31,36 @@ class Level extends React.Component {
 	confirm() {
 		bridge.send("VKWebAppGetGeodata", {})
 			.then((data) => {
-				Api.home.confirm(this.props.fetchedUser.id, data.lat, data.long, (level) => {
-					this.props.onLevelUpdate(level);
-				});
+				Api.home.confirm(this.props.fetchedUser.id, data.lat, data.long, (level) => this.afterConfirm(level));
 			})
 			.catch(() => {
-				Api.home.confirm(this.props.fetchedUser.id, null, null, (level) => {
-					this.props.onLevelUpdate(level);
-				});
+				Api.home.confirm(this.props.fetchedUser.id, null, null, (level) => this.afterConfirm(level));
 			});
+	}
+
+	afterConfirm(level) {
+		this.props.onLevelUpdate(level).then(() => {
+			const result = level.result;
+			switch(parseInt(result.status)) {
+				// Подтверждено
+				case 1:
+					this.props.onOpenModal(MODAL_REWARD, {value: result.value});
+					break;
+				// Не дома
+				case 2:
+					this.props.onOpenModal(MODAL_NOT_HOME);
+					break;
+				// Опаздал
+				case 4:
+					this.props.onOpenModal(MODAL_SKIPPED);
+					break;
+				// Нет геоданных
+				case 8:
+				case 12:
+					this.props.onOpenModal(MODAL_NO_GEODATA);
+					break;
+			}
+		});
 	}
 
 	statusOfCheck(check) {
@@ -47,12 +70,8 @@ class Level extends React.Component {
 			case 4: return 'Поздно';
 			case 8:
 			case 12: return 'Нет геоданных';
-			default:
-				if((new Date(check.sended_c).getTime()/1000) > Math.floor(Date.now()/1000) - 600) {
-					return 'Не подтверждено';
-				} else {
-					return 'Пропущено';
-				}
+			case 16: return 'Пропущено';
+			default: return 'Требует подтверждения';
 		}
 	}
 
@@ -63,12 +82,8 @@ class Level extends React.Component {
 			case 4: return (<Icon24RecentOutline style={{color: 'red'}} />);
 			case 8:
 			case 12: return (<Icon24Place style={{color: 'gray'}} />);
-			default:
-				if((new Date(check.sended_c).getTime()/1000) > Math.floor(Date.now()/1000) - 600) {
-					return <Icon24Notification style={{color: 'green'}} />;
-				} else {
-					return <Icon24ThumbDown style={{color: 'gray'}} />;
-				}
+			case 16: return <Icon24ThumbDown style={{color: 'gray'}} />;
+			default: return <Icon24Notification style={{color: 'var(--button_primary_background)'}} />;
 		}
 	}
 
@@ -136,7 +151,6 @@ class Level extends React.Component {
 }}
 
 const mapStateToProps = (state, ownProps) => {
-	console.log('mapStateToProps', state, ownProps);
 	return {
 		level: state.level.level
 	};
@@ -144,9 +158,18 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
+		// Обновляет очки и таблицу проверок
 		onLevelUpdate: (level) =>
 			new Promise((resolve) =>
 				updateLevel(level).then((action) => {
+					dispatch(action);
+					resolve();
+				})
+			),
+		// Открывает модальное окно
+		onOpenModal: (activeModal, modalParams) =>
+			new Promise((resolve) =>
+				openModal(activeModal, modalParams).then((action) => {
 					dispatch(action);
 					resolve();
 				})

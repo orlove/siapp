@@ -3,8 +3,10 @@
  */
 import { combineReducers } from 'redux';
 import level from './level';
+import modal from './modal';
 
 const appReducer = combineReducers({
+    modal,
     level
 });
 

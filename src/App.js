@@ -1,10 +1,7 @@
 import React from 'react';
 import View from '@vkontakte/vkui/dist/components/View/View';
-import { ScreenSpinner, ModalRoot, ModalCard } from '@vkontakte/vkui';
+import { ScreenSpinner } from '@vkontakte/vkui';
 import '@vkontakte/vkui/dist/vkui.css';
-import Icon28HomeOutline from '@vkontakte/icons/dist/28/home_outline';
-import Icon28Messages from '@vkontakte/icons/dist/28/messages';
-import Icon28CompassOutline from '@vkontakte/icons/dist/28/compass_outline';
 
 import bridge from '@vkontakte/vk-bridge';
 import Api from './core/api/Api';
@@ -12,15 +9,13 @@ import Api from './core/api/Api';
 // Redux
 import { connect } from 'react-redux';
 import { updateLevel } from './redux/actions/level';
+import { openModal } from './redux/actions/modal';
 
 import Home from './panels/Home';
 import Begin from './panels/Begin';
 import Level from './panels/Level';
 import Rating from './panels/Rating';
-
-const MODAL_BEFORE_BEGIN = 'before-begin';
-const MODAL_NOT_ALLOW_MESSAGES = 'not-allow-messages';
-const MODAL_NOT_ALLOW_LOCATION = 'not-allow-location';
+import Modal, { MODAL_ARE_AT_HOME, MODAL_NOT_ALLOW_MESSAGES, MODAL_NOT_ALLOW_LOCATION } from './modals/Modal';
 
 class App extends React.Component {
 
@@ -42,10 +37,6 @@ class App extends React.Component {
 			this.setState({user: user});
 		};
 
-		this.modalClose = () => {
-			this.setState({activeModal: null});
-		};
-
 		this.begin = (geodata) => {
 			let body = Object.assign({}, this.state.user);
 
@@ -55,15 +46,18 @@ class App extends React.Component {
 
 			Api.home.begin(body, (result) => {
 				if(result) {
-					this.props.onLevelUpdate(result);
-					this.navigate('level');
+					this.props.onLevelUpdate(result).then(() => {
+						this.navigate('level');
+					});
 				}
 			});
 		}
 
 		/** Запрос разрешений */
 		this.permission = () => {
-			this.modalClose();
+			// Закрываем модальное окно (если открыто)
+			this.props.onOpenModal(null);
+
 			bridge.send("VKWebAppAllowMessagesFromGroup", {group_id: 193696611})
 				.then(data => {
 					bridge.send("VKWebAppGetGeodata", {})
@@ -80,13 +74,13 @@ class App extends React.Component {
 							if(locationPermissionCount > 1) {
 								this.begin();
 							} else {
-								this.setActiveModal(MODAL_NOT_ALLOW_LOCATION);
+								this.props.onOpenModal(MODAL_NOT_ALLOW_LOCATION);
 							}
 						});
 				})
 				// Не разрешил отправлять сообщения
 				.catch(() => {
-					this.setActiveModal(MODAL_NOT_ALLOW_MESSAGES);
+					this.props.onOpenModal(MODAL_NOT_ALLOW_MESSAGES);
 				});
 		};
   }
@@ -108,7 +102,7 @@ class App extends React.Component {
 
 			const level = await Api.home.level(user.id);
 			if(level) {
-				this_.props.onLevelUpdate(level).then(() => {this_.navigate('level')});
+				this_.props.onLevelUpdate(level).then(() => {this_.permission()});
 			} else {
 				this_.navigate('begin');
 			}
@@ -116,60 +110,12 @@ class App extends React.Component {
 		fetchData();
 	}
 
-	setActiveModal (activeModal) {
-		this.setState({activeModal: activeModal || null});
-	}
-
 	render() {
 		return (
-			<View activePanel={this.state.activePanel} modal={
-				<ModalRoot
-					activeModal={this.state.activeModal}
-					onClose={this.modalBack}
-				>
-					<ModalCard
-						id={MODAL_BEFORE_BEGIN}
-						onClose={() => this.setActiveModal(null)}
-						icon={<Icon28HomeOutline />}
-						header="Вы подтверждаете что находитесь дома?"
-						caption={<p>Баллы будут начисляться только за нахождение там, где вы находитесь сейчас.<br />Не забудьте разрешить данные о местоположении.</p>}
-						actions={[{
-							title: 'Да, подтверждаю',
-							mode: 'primary',
-							action: this.permission
-						}]}
-					>
-					</ModalCard>
-					<ModalCard
-						id={MODAL_NOT_ALLOW_LOCATION}
-						onClose={() => this.setActiveModal(null)}
-						icon={<Icon28CompassOutline />}
-						header="Вам нужно разрешить доступ к геопозиции"
-						caption="Без данного разрешения приложение не сможет начислять вам баллы"
-						actions={[{
-							title: 'Повторить',
-							mode: 'primary',
-							action: this.permission
-						}]}
-					>
-					</ModalCard>
-					<ModalCard
-						id={MODAL_NOT_ALLOW_MESSAGES}
-						onClose={() => this.setActiveModal(null)}
-						icon={<Icon28Messages />}
-						header="Вам нужно разрешить отправку сообщений"
-						caption="Без данного разрешения приложение не сможет отправлять вам уведомления."
-						actions={[{
-							title: 'Повторить',
-							mode: 'primary',
-							action: this.permission
-						}]}
-					>
-					</ModalCard>
-				</ModalRoot>}
+			<View activePanel={this.state.activePanel} modal={<Modal permission={this.permission} />}
 			>
 				<Home id='home' fetchedUser={this.state.user} navigate={this.navigate} />
-				<Begin id='begin' fetchedUser={this.state.user} navigate={this.navigate} start={() => {this.setActiveModal(MODAL_BEFORE_BEGIN)}} />
+				<Begin id='begin' fetchedUser={this.state.user} navigate={this.navigate} start={() => {this.props.onOpenModal(MODAL_ARE_AT_HOME)}} />
 				<Level id='level' fetchedUser={this.state.user} navigate={this.navigate} permission={this.permission} />
 				<Rating id='rating' navigate={this.navigate} />
 			</View>
@@ -178,7 +124,6 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-	console.log('App.mapStateToProps', state, ownProps);
 	return {};
 };
 
@@ -190,7 +135,14 @@ const mapDispatchToProps = (dispatch) => {
 					dispatch(action);
 					resolve();
 				})
-			)
+			),
+			onOpenModal: (activeModal) =>
+				new Promise((resolve) =>
+					openModal(activeModal).then((action) => {
+						dispatch(action);
+						resolve();
+					})
+				)
 	};
 };
 
