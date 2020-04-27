@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/siapp/static/css/main.e4b7a51b.chunk.css",
-    "main.js": "/siapp/static/js/main.39e68dfc.chunk.js",
-    "main.js.map": "/siapp/static/js/main.39e68dfc.chunk.js.map",
+    "main.js": "/siapp/static/js/main.4526f505.chunk.js",
+    "main.js.map": "/siapp/static/js/main.4526f505.chunk.js.map",
     "runtime-main.js": "/siapp/static/js/runtime-main.5e26e7d8.js",
     "runtime-main.js.map": "/siapp/static/js/runtime-main.5e26e7d8.js.map",
     "static/css/2.4fc5a6bc.chunk.css": "/siapp/static/css/2.4fc5a6bc.chunk.css",
     "static/js/2.3ecabe23.chunk.js": "/siapp/static/js/2.3ecabe23.chunk.js",
     "static/js/2.3ecabe23.chunk.js.map": "/siapp/static/js/2.3ecabe23.chunk.js.map",
     "index.html": "/siapp/index.html",
-    "precache-manifest.cc5cf9c6f1ea76915d8bc14264047f91.js": "/siapp/precache-manifest.cc5cf9c6f1ea76915d8bc14264047f91.js",
+    "precache-manifest.f4db3e7ee6767df3c91fd7891c731fb3.js": "/siapp/precache-manifest.f4db3e7ee6767df3c91fd7891c731fb3.js",
     "service-worker.js": "/siapp/service-worker.js",
     "static/css/2.4fc5a6bc.chunk.css.map": "/siapp/static/css/2.4fc5a6bc.chunk.css.map",
     "static/css/main.e4b7a51b.chunk.css.map": "/siapp/static/css/main.e4b7a51b.chunk.css.map",
@@ -22,6 +22,6 @@
     "static/css/2.4fc5a6bc.chunk.css",
     "static/js/2.3ecabe23.chunk.js",
     "static/css/main.e4b7a51b.chunk.css",
-    "static/js/main.39e68dfc.chunk.js"
+    "static/js/main.4526f505.chunk.js"
   ]
 }
